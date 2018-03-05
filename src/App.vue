@@ -1,17 +1,19 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
+    <SearchBar/>
   </div>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import SearchBar from './components/SearchBar.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    SearchBar, HelloWorld
   }
 }
 </script>
@@ -23,6 +25,11 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  padding-bottom: 100px;
+}
+html {
+  background: linear-gradient(#d442f4, #6b1d7c);
+  background-repeat: no-repeat;
+  min-height: 786px;
 }
 </style>
