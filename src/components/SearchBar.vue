@@ -19,14 +19,16 @@
     input[type=text] {
         font-size: 45px;
     }
-    input:focus {
-        /*border: none;*/
-        border-bottom: 2px;
-        outline: none;
-    }
+    /*input:focus {*/
+        /*!*border: none;*!*/
+        /*border-bottom: 2px;*/
+        /*outline: none;*/
+    /*}*/
     input {
-        /*border: none;*/
-        border-bottom: 2px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 2px white solid;
         outline: none;
     }
 </style>
