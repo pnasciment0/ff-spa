@@ -31,7 +31,7 @@ export default {
   padding-bottom: 100px;
 }
 html {
-  background: linear-gradient(#d442f4, #6b1d7c);
+  /*background: linear-gradient(#d442f4, #6b1d7c);*/
   background-repeat: no-repeat;
   min-height: 786px;
 }
@@ -39,5 +39,6 @@ html {
 #main-title {
   font-size: 48px;
   padding: 60px 0px;
+  font-weight: bold;
 }
 </style>
