@@ -1,15 +1,40 @@
 <template>
-    <div class="search-bar-wrapper">
-        <input placeholder="Ex: DeAndre Hopkins" type="text" class="search-bar">
-        <button type="submit" class="search-button">
-            <i class="fas fa-search"></i>
-        </button>
+    <div class="wrapper">
+        <form id="search-for-player" @submit.prevent="getPlayerName">
+            <div class="search-bar-wrapper">
+                <input placeholder="Ex: DeAndre Hopkins" type="text" class="search-bar" v-model="playerName">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+        <div class="player-message">
+            <p>{{searchedValue}}</p>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: "SearchBar"
+        name: "SearchBar",
+        data() {
+            return {
+                playerName: '',
+                searchedValue: ''
+            }
+        },
+        methods: {
+            getPlayerName() {
+                if (this.playerName === '') {
+                    console.log("empty");
+                    return;
+                }
+                console.log("Search value", this.playerName);
+                this.searchedValue = this.playerName;
+                let url = `https://www.google.com/search?q=${this.playerName.replace(' ', '+')}+fantasy`;
+                console.log("URL", url);
+            }
+        }
     }
 </script>
 
@@ -43,5 +68,9 @@
         background:transparent;
         font-size: 24px;
         border: none;
+        cursor: pointer;
+    }
+    .search-button:focus {
+        outline: 0;
     }
 </style>

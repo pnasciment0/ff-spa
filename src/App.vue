@@ -1,12 +1,12 @@
 <template>
-  <div id="app">
+    <div id="app">
     <!--<img src="./assets/logo.png">-->
-    <div id ="main-title">
-      Fantasy Football News Aggregator
-    </div>
+        <div id ="main-title">
+            Fantasy Football News Aggregator
+        </div>
     <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
-    <SearchBar/>
-  </div>
+        <SearchBar/>
+    </div>
 </template>
 
 <script>
@@ -14,10 +14,10 @@ import HelloWorld from './components/HelloWorld.vue'
 import SearchBar from './components/SearchBar.vue'
 
 export default {
-  name: 'app',
-  components: {
-    SearchBar, HelloWorld
-  }
+    name: 'app',
+    components: {
+        SearchBar, HelloWorld
+    }
 }
 </script>
 
