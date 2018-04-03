@@ -11,28 +11,43 @@
         <div class="player-message">
             <p>{{searchedValue}}</p>
         </div>
+        <div class="server-response">
+            <p>{{serverResponse}}</p>
+        </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         name: "SearchBar",
         data() {
             return {
                 playerName: '',
-                searchedValue: ''
+                searchedValue: '',
+                serverResponse: ''
             }
         },
         methods: {
             getPlayerName() {
                 if (this.playerName === '') {
+                    this.searchedValue = "No input given. Please enter a player name.";
                     console.log("empty");
                     return;
                 }
                 console.log("Search value", this.playerName);
                 this.searchedValue = this.playerName;
-                let url = `https://www.google.com/search?q=${this.playerName.replace(' ', '+')}+fantasy`;
-                console.log("URL", url);
+                let serverUrl = "https://us-central1-fantasynewsaggregator.cloudfunctions.net/api";
+                let url = `${serverUrl}/player?q=${this.playerName.replace(' ', '+')}`;
+                console.log("URL ", url);
+                axios.get(url)
+                    .then((response) => {
+                        this.serverResponse = response.data;
+                        console.log(response);
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                    });
             }
         }
     }
