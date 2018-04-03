@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const request = require('request');
+const cheerio = require('cheerio');
 
 const app = express();
 
@@ -31,7 +32,9 @@ function getRotoWorld(req, res) {
                throw err;
            }
            console.log(body);
-           res.send("Roto string is: " + body);
+           let $ = cheerio.load(body);
+
+            res.send($('.playernews .report')[0].children[0].data);
         });
     } else {
         res.send("No player parameter. Endpoint usage: fantasynewsaggregator.com/player?q=firstname+lastname");

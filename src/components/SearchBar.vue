@@ -34,8 +34,7 @@
                     this.searchedValue = "No input given. Please enter a player name.";
                     console.log("empty");
                     return;
-                }
-                console.log("Search value", this.playerName);
+                };
                 this.searchedValue = this.playerName;
                 let serverUrl = "https://us-central1-fantasynewsaggregator.cloudfunctions.net/api";
                 let url = `${serverUrl}/player?q=${this.playerName.replace(' ', '+')}`;
