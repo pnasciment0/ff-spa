@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-// const request = require('request');
+const request = require('request');
 
 const app = express();
 
@@ -25,9 +25,16 @@ function getRotoWorld(req, res) {
         let playerName = req.query.q;
         let lastName = playerName.split(' ')[1];
         let firstName = playerName.split(' ')[0];
-        res.send("Roto String is: ?searchname=" + lastName + ",%20" + firstName + "&sport=nfl");
+        let url = "http://www.rotoworld.com/content/playersearch.aspx?searchname=" + lastName + ",%20" + firstName + "&sport=nfl";
+        request.get(url, (err, response, body) => {
+           if (err) {
+               throw err;
+           }
+           console.log(body);
+           res.send("Roto string is: " + body);
+        });
     } else {
-        res.send("No player parameter. Usage: fantasynewsaggregator.com/player?q=firstname+lastname");
+        res.send("No player parameter. Endpoint usage: fantasynewsaggregator.com/player?q=firstname+lastname");
     }
 }
 
