@@ -13,31 +13,62 @@ app.use(cors({
 app.use(bodyParser.json());
 
 app.get("/player", (req, res) => {
-    getRotoWorld(req, res);
+    if (!req.query.q) {
+        res.send("No player parameter. Endpoint usage: fantasynewsaggregator.com/player?q=firstname+lastname");
+    } else {
+        // getRotoworld(req, res);
+        getFantasyPros(req, res);
+    }
 });
-
 
 // lol we're going to use a stupid ass hack for this
 // rotoworld searches dont show you the URL unless you fuck it up
 // last name, first name
 // ex: deandre+hopkins
-function getRotoWorld(req, res) {
-    if (req.query.q) {
-        let playerName = req.query.q;
-        let lastName = playerName.split(' ')[1];
-        let firstName = playerName.split(' ')[0];
-        let url = "http://www.rotoworld.com/content/playersearch.aspx?searchname=" + lastName + ",%20" + firstName + "&sport=nfl";
-        request.get(url, (err, response, body) => {
-           if (err) {
-               throw err;
-           }
-           console.log(body);
-           let $ = cheerio.load(body);
+function getRotoworld(req, res) {
+    let player = getPlayerName(req);
+    let lastName = player.last;
+    let firstName = player.first;
+    let url = "http://www.rotoworld.com/content/playersearch.aspx?searchname=" + lastName + ",%20" + firstName + "&sport=nfl";
+    request.get(url, (err, response, body) => {
+        if (err) {
+            throw err;
+        }
+        console.log(body);
+        let $ = cheerio.load(body);
 
-            res.send($('.playernews .report')[0].children[0].data);
+        // res.send("Roto string is: " + body);
+        res.send($('.playernews .report')[0].children[0].data);
+    });
+}
+
+function getFantasyPros(req, res) {
+    let player = getPlayerName(req);
+    let lastName = player.last;
+    let firstName = player.first;
+    let url = `http://www.fantasypros.com/nfl/players/${firstName}-${lastName}.php`;
+    request.get(url, (err, response, body) => {
+        if (err) {
+            throw err;
+        }
+        let $ = cheerio.load(body);
+        let tmp = $('.inner .body-row .content p');
+        tmp.each(function() {
+            console.log($(this).text());
+            res.write($(this).text() + "\n");
         });
-    } else {
-        res.send("No player parameter. Endpoint usage: fantasynewsaggregator.com/player?q=firstname+lastname");
+        res.end();
+        // res.send($('.inner .body-row .content p')[0].children.data);
+    })
+}
+
+function getPlayerName(req) {
+    let playerName = req.query.q;
+    let lastName = playerName.split(' ')[1];
+    let firstName = playerName.split(' ')[0];
+    return {
+        last: lastName,
+        first: firstName
     }
 }
 
