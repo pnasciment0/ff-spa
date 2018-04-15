@@ -1,10 +1,8 @@
 <template>
     <div id="app">
-    <!--<img src="./assets/logo.png">-->
         <div id ="main-title">
             Fantasy Football News Aggregator
         </div>
-    <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
         <SearchBar/>
     </div>
 </template>

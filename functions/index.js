@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const request = require('request');
 const cheerio = require('cheerio');
+let rp = require('request-promise');
 
 const app = express();
 
@@ -16,50 +17,76 @@ app.get("/player", (req, res) => {
     if (!req.query.q) {
         res.send("No player parameter. Endpoint usage: fantasynewsaggregator.com/player?q=firstname+lastname");
     } else {
-        // getRotoworld(req, res);
-        getFantasyPros(req, res);
+        getResponse(req, res)
     }
 });
+
+async function getResponse(req, res) {
+    const cardTitle = await getCardTitle(req);
+    const rotoString = await getRotoworld(req);
+    const fpString = await getFantasyPros(req);
+    let result = {
+        title: cardTitle,
+        roto: rotoString,
+        fp: fpString
+    };
+    res.json(result);
+}
+
+async function getCardTitle(req) {
+    let player = getPlayerName(req);
+    let lastName = player.last;
+    let firstName = player.first;
+    let url = "http://www.rotoworld.com/content/playersearch.aspx?searchname=" + lastName + ",%20" + firstName + "&sport=nfl";
+    try {
+        const response = await rp(url);
+        let $ = cheerio.load(response);
+        return Promise.resolve($("title").text().trim().split(" - ")[0]);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
 
 // lol we're going to use a stupid ass hack for this
 // rotoworld searches dont show you the URL unless you fuck it up
 // last name, first name
 // ex: deandre+hopkins
-function getRotoworld(req, res) {
+async function getRotoworld(req) {
     let player = getPlayerName(req);
     let lastName = player.last;
     let firstName = player.first;
     let url = "http://www.rotoworld.com/content/playersearch.aspx?searchname=" + lastName + ",%20" + firstName + "&sport=nfl";
-    request.get(url, (err, response, body) => {
-        if (err) {
-            throw err;
-        }
-        console.log(body);
-        let $ = cheerio.load(body);
-
-        // res.send("Roto string is: " + body);
-        res.send($('.playernews .report')[0].children[0].data);
-    });
+    try {
+        const response = await rp(url);
+        let $ = cheerio.load(response);
+        let rotoData = {
+            report: $(".playernews .report")[0].children[0].data,
+            impact: $(".playernews .impact")[0].children[0].data
+        };
+        return Promise.resolve(rotoData);
+    } catch (error) {
+        return Promise.reject(error);
+    }
 }
 
-function getFantasyPros(req, res) {
+async function getFantasyPros(req, res) {
     let player = getPlayerName(req);
     let lastName = player.last;
     let firstName = player.first;
     let url = `http://www.fantasypros.com/nfl/players/${firstName}-${lastName}.php`;
-    request.get(url, (err, response, body) => {
-        if (err) {
-            throw err;
-        }
-        let $ = cheerio.load(body);
+    try {``
+        const response = await rp(url);
+        let $ = cheerio.load(response);
         let tmp = $('.inner .body-row .content p');
-        tmp.each(function() {
-            console.log($(this).text());
-            res.write($(this).text() + "\n");
-        });
-        res.end();
-        // res.send($('.inner .body-row .content p')[0].children.data);
-    })
+        let fpData = {
+            headline: tmp[0].children[0].children[0].data,
+            news: tmp[1].children[0].data,
+            impact: tmp[3].children[0].data
+        };
+        return Promise.resolve(fpData);
+    } catch (error) {
+        return Promise.reject(error);
+    }
 }
 
 function getPlayerName(req) {

@@ -14,27 +14,33 @@
         <div class="server-response">
             <p>{{serverResponse}}</p>
         </div>
+        <div v-if="hasPlayerData" class="player-card">
+            <PlayerCard :player-name="searchedValue" :server-response="serverResponse"/>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios'
+    import PlayerCard from './PlayerCard.vue'
     export default {
         name: "SearchBar",
         data() {
             return {
                 playerName: '',
                 searchedValue: '',
-                serverResponse: ''
+                serverResponse: '',
+                hasPlayerData: false
             }
         },
         methods: {
             getPlayerName() {
+                this.hasPlayerData = true;
                 if (this.playerName === '') {
                     this.searchedValue = "No input given. Please enter a player name.";
                     console.log("empty");
                     return;
-                };
+                }
                 this.searchedValue = this.playerName;
                 let serverUrl = "https://us-central1-fantasynewsaggregator.cloudfunctions.net/api";
                 let url = `${serverUrl}/player?q=${this.playerName.replace(' ', '+')}`;
@@ -48,6 +54,9 @@
                         console.log(err);
                     });
             }
+        },
+        components: {
+            PlayerCard
         }
     }
 </script>
